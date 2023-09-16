@@ -1,2 +1,3 @@
 lib/
-RecordRtc.js
+RecordRTC.js
+.DS_store
