@@ -10,3 +10,5 @@ with JATOS. There is also an ID exchange pipeline with Qualtrics built in thorug
 The stimuli for the study are the dots generated with coordinates in a predetermined grid. The study also
 records a media stream from the webcam and time-stamps it in the local experiment time system for future parsing.
 
+TO-DOs
+--------------------------
