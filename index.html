@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Experiment</title>
+    <title>Study | Robbins Lab</title>
     <!-- viewport setup -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- lab.js and libraries -->
@@ -11,15 +11,15 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="lib/lab.css" />
     <!-- actual experiment code -->
+    <script src="jatos.js"></script>
     <script defer src="study.js"></script>
   </head>
 
   <body>
     <!-- If you'd rather have a container with a fixed width
        and variable height, try removing the fullscreen class below -->
-    <div class="container fullscreen" id="exp-container">
-      <main class="content-vertical-center content-horizontal-center"
-        data-labjs-section="main", id="main-frame">
+    <div class="container fullscreen" id="main-frame">
+      <main class="content-vertical-center content-horizontal-center" id="inline-main" data-labjs-section="main">
         <!-- the nested div is helpful because the centering would
            otherwise break the natural flow of content -->
         <div>
@@ -31,10 +31,10 @@
             <div></div>
             <div></div>
           </div>
-          <p>
+          <!-- <p>
             <strong>Preparing experiment environment</strong><br />
             <span class="text-muted">please wait a moment</span>
-          </p>
+          </p> -->
         </div>
       </main>
       <!-- <footer class="content-vertical-center">
@@ -44,7 +44,6 @@
           </small>
         </div>
       </footer> -->
-
     </div>
   </body>
 </html>
