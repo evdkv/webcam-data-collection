@@ -169,19 +169,23 @@ jatos.onLoad(function() {
 
     document.getElementById("main-frame").style = "border: 5pt solid red";
     canvas.style = "border: 5pt solid orange";
-    ctx.font = "20px Verdana"
+    ctx.font = "17px Verdana";
+    ctx.textAlign = "center"; 
     ctx.fillText("- Now, we will scale the experiment to your browser window.", 
-      canvas.width / 4, 
+      canvas.width / 2, 
       canvas.height / 3.7); 
     ctx.fillText("- You should see the orange and the red line creating two bounding boxes.",
-      canvas.width / 4,
+      canvas.width / 2,
       canvas.height / 3.2)
     ctx.fillText("- ORANGE box should sit right on top of RED box with NO gaps in between.",
-      canvas.width / 4,
+      canvas.width / 2,
       canvas.height / 2.8)
-    ctx.fillText("- If what you see is different, please reload the page and do not rescale the browser window.",
-      canvas.width / 4,
+    ctx.fillText("- You will now proceed to the actual study. Don't forget: you need to stare at the dot until it becomes green, then press SPACE to see the next dot.",
+      canvas.width / 2,
       canvas.height / 2.5)
+    ctx.fillText("- Press SPACE to START THE STUDY.",
+      canvas.width / 2,
+      canvas.height / 2.2)
   }
 
   const canvasFactory = function(params, ix) {
@@ -217,13 +221,13 @@ jatos.onLoad(function() {
   })
 
   const studyInfo = new lab.html.Screen({
-    content:'<p>Study ID: ${ parameters.study }<br>Study version: ${ parameters.name }<br>Participant ID: ${ parameters.worker }<br>Pool: ${ parameters.pool }</p><br>',
-    parameters: {
-      study: jatosMetaData.studyCode,
-      name: jatosMetaData.studyTitle,
-      worker: jatosMetaData.workerId,
-      pool: jatosMetaData.batchTitle
-    },
+    content:`
+    <div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">
+    <img src="rlab.png" height="50" width="70" style="display:inline-block;align-self:center;">
+    <h3>Webcam Eye Tracking Study</h3>
+    <p>press <kbd>SPACE</kbd> to continue</p>
+    </div>
+    `,
     responses: {
       "keypress(Space)": "to_study"
     },
@@ -234,7 +238,7 @@ jatos.onLoad(function() {
     title: 'redirect_screen',
     content: `<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">
               <div>
-                <p>Please press <kbd>Submit</kbd> to to submit the study results.
+                <p>Please press <kbd>Submit</kbd> to submit the study results.
               Do not close any windows until you see a completion message</p>
               </div>
               <div>
@@ -319,9 +323,16 @@ jatos.onLoad(function() {
   const videoPreview = new lab.html.Screen({
     content: [`<div style="display:flex;flex-direction:column;align-content:center">
     <h3>Camera Check</h3>
-    <div><video controls="" autoplay="" playsinline=""></video></div>
-    <div><p>Camera Instructions will go here</p></div>
-    <div><p>press <kbd>v</kbd> to continue</p></div>
+    <div><video style="height:30vh;" controls="" autoplay="" playsinline=""></video></div>
+    <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+    <div><p>Make sure to check for the following:</p></div>
+    <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
+    <li>Your face and eyes are fully visible to the webcam.</li>
+    <li>There are no other faces in the background.</li>
+    <li>If you are wearing glasses, make sure there is no glare that obstructs the eyes.</li>
+    </ul>
+    </container>
+    <p>press <kbd>v</kbd> to continue</p>
     </div>`],
     responses: {
       "keypress(v)": "next_screen"
@@ -337,12 +348,14 @@ jatos.onLoad(function() {
         `
         <div class="text-center">
         <h3>Study Information</h3>
+        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
         <p style="margin-left:50px;margin-right:50px">The purpose of this study is to collect a large eye movement dataset to improve
         the performance of webcam eye tracking models. As a part of the task you will be asked to look at dots
         on the screen appearing in various locations while your eye movements are recorded using a webcam on your personal
         computer.</p> <br><br>
         <p>press <kbd>7</kbd> to continue</p>
         </div>
+        </container>
         `,
         responses: {
           "keypress(7)": "next_screen"
@@ -379,22 +392,71 @@ jatos.onLoad(function() {
         `
         <div class="text-center">
         <h3>The Task</h3>
-        <p>Information about the task</p> <br><br>
+        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+        <p>With each trial, please look at the BLACK dot that appears on the screen. Please stare at the dot until its color turns GREEN. After the dot
+        became GREEN, press <kbd>SPACE</kbd> to see the dot in the next location.</p>
+        <br>
+        <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
+        <li>Follow the dot with your eyes, please do NOT turn your head to follow the dot.</li>
+        <li>Make sure there are no other faces in your background (photos or actual people).</li>
+        <li>If you are wearing glasses, make sure your eyes are clearly visible through the glasses.</li>
+        </ul>
         <p>press <kbd>0</kbd> to continue</p>
         </div>
+        </container>
         `,
         responses: {
           "keypress(0)": "next_screen"
         }
       }),
-      videoPreview
+      videoPreview,
+      new lab.html.Screen({
+        title: "i4",
+        content: 
+        `
+        <div class="text-center">
+        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+        <p>Now, please press <kbd>ENTER</kbd> to enter into the fullscreen mode. At this point, please do not
+        exit the fullscreen mode until prompted to do so at the end of the study.</p>
+        <br>
+        <p>press <kbd>m</kbd> to continue</p>
+        </div>
+        </container>
+        `,
+        responses: {
+          "keypress(m)": "next_screen"
+        }
+      }),
     ]
   });
 
   const studySeq = new lab.flow.Sequence({
     title: "main_sequence",
     content: [
-      // dotLoop,
+      new lab.canvas.Screen({
+        title: "main_seq",
+        renderFunction: renderScalingInstructions,
+        responses: {
+          "keypress(Space)": "next_screen"
+        }
+      }),
+      dotLoop,
+      new lab.html.Screen({
+        title: "exit_fs_slide",
+        content: 
+        `
+        <div class="text-center">
+        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+        <p>Now press <kbd>ENTER</kbd> to exit the fullscreen mode</p>
+        <br>
+        <p>press <kbd>SPACE</kbd> to continue</p>
+        </div>
+        </container>
+        `,
+        responses: {
+          "keypress(Space)": "next_screen"
+        }
+      }),
       redirectScreen,
       awaitRedirectScreen
     ]
@@ -447,13 +509,6 @@ jatos.onLoad(function() {
     ],
     content: [
       studyInfo,
-      new lab.canvas.Screen({
-        title: "main_seq",
-        renderFunction: renderScalingInstructions,
-        responses: {
-          "keypress(Space)": "next_screen"
-        }
-      }),
         instrucFrame,
         mainFrame
     ],
