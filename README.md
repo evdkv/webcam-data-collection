@@ -12,3 +12,6 @@ records a media stream from the webcam and time-stamps it in the local experimen
 
 TO-DOs
 --------------------------
+- Clean up study.js and separate screens into separate variables
+- Fix typos in the instructions
+- 
