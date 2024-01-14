@@ -216,9 +216,12 @@ jatos.onLoad(function() {
     video.srcObject = null;
     // video.src = URL.createObjectURL(blob);
     recorder.camera.stop();
+    console.log("debug: recorder stopped");
     let blob = recorder.getBlob();
+    console.log("debug: blob created");
     jatos.uploadResultFile(blob, jatos.urlQueryParameters.participant_id + "_" + "video.webm")
          .catch(() => endFail('video'));
+    console.log("debug: blob uploaded");
   };
 
   const renderVid = function() {
@@ -447,7 +450,7 @@ jatos.onLoad(function() {
                </div>
               </div>
                `,
-    timeout: 3000
+    timeout: 5000
   });
 
   const awaitVideo = new lab.html.Screen({
@@ -564,10 +567,10 @@ jatos.onLoad(function() {
   // *************************************************** //
 
 
-  var videoPromise =  new Promise((resolve) => {
-      recorder.stopRecording(stopRecordingCallback);
-      resolve();
-  });
+  // var videoPromise =  new Promise((resolve) => {
+  //     recorder.stopRecording(stopRecordingCallback);
+  //     resolve();
+  // });
 
 
   videoPreview.on('run', () => renderVid());
@@ -575,12 +578,16 @@ jatos.onLoad(function() {
   dotLoop.on('run', () => recorder.resumeRecording());
   // dotLoop.on('end', () => recorder.stopRecording(stopRecordingCallback));
   dotLoop.on('end', () => recorder.pauseRecording());
-  redirectScreen.on('end', () =>  videoPromise
-                                      .then(() => {jatos.submitResultData(study.options.datastore.exportJson())})
-                                      .then(() => {jatos.uploadResultFile(study.options.datastore.exportCsv(), jatos.urlQueryParameters.participant_id + '.csv')})
-                                      .catch(() => {endFail("dataset")})
-                                      .then(() => {endSuccess()}));
-                                      
+  redirectScreen.on('end', () =>  
+    new Promise((resolve, reject) => {
+      recorder.stopRecording(stopRecordingCallback);
+      resolve();
+    })
+    .then(() => {jatos.submitResultData(study.options.datastore.exportJson())})
+    .then(() => {jatos.uploadResultFile(study.options.datastore.exportCsv(), jatos.urlQueryParameters.participant_id + '.csv')})
+    //.then(() => {endSuccess()})
+    .catch(() => { console.log("caught during upload ") /*endFail("dataset") */ }));
+  awaitRedirectScreen.on('end', () => endSuccess());                                   
 
   // *************************************************** //
   // ****************  STUDY RUNNER  ******************* //
