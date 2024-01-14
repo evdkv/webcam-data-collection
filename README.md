@@ -12,21 +12,15 @@ records a media stream from the webcam and time-stamps it in the local experimen
 
 Current Challenges
 --------------------------
-There are multiple problems with the file uploads. First, the limis per submission and per upload were insufficient 
-on the JATOS server, so I changed them and restarted our JATOS container. This is only a part of the issue. Another
-challenge is the fact that uploading large videos takes longer and dataset uploads that happen after the video uploads are
-most likely clashing during the study runtime. This means that neither are properly uploaded. This is not a problem for shorter
-video files since they can get uploaded by the time participant reaches the dataset upload event.
-
-One way to deal with this is to upload everything at the end of the study and set up promises to ensure that data are uploaded
-sequentially. Currently, I am trying to figure out how to set them up in a way that would work.
+None for now. File upload errors were resolved.
 
 TO-DOs
 --------------------------
-- [ ] Set up upload promises
+- [ ] Refactor exception handling to match the new promise logic
+- [ ] Remove debugger console logs and comments
 - [ ] Add detailed documentation to the study.js script
 - [ ] Switch the text size units to rem and test on screens with various scaling ratios
-- [ ] Log the square coordinates in the dataset (or maybe add them back in at post processing?)
+- [X] Set up upload promises
 - [X] Change the HTTP POST timeout in the JATOS server configuration
 - [X] Change the max allowed upload file size in the JATOS server configuration
 - [X] Clean up study.js and separate screens into separate variables
