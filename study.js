@@ -1,5 +1,5 @@
 jatos.onLoad(function() {
-  const STUDYVERSION = "v1.0-pilot";
+  const STUDYVERSION = "v2.0-2s-pilot";
   var video = null;
   var recorder = null;
 
@@ -7,7 +7,7 @@ jatos.onLoad(function() {
   jatos.addJatosIds(jatosMetaData);
 
   // This will be empty for the rest of the study.
-  // Use study.options.datastore to access/mutate info in the data store
+  // Use study.options.datastore to access/set data in the data store
   const dataStore = new lab.data.Store();
   const random = new lab.util.Random();
 
@@ -39,213 +39,259 @@ jatos.onLoad(function() {
     } else if (document.exitFullscreen) {
       document.exitFullscreen();
     }
-  };
+  }
 
   function fullscreenchanged(event) {
-  if (document.fullscreenElement) {
-    study.options.datastore.set({messages : 'Participant ENTERED fs'});
-    jatos.removeOverlay();
-  } else {
-    study.options.datastore.set({messages : 'Participant EXITED fs'});
-    jatos.showOverlay({
-      text: "Please press ENTER to return to fullscreen mode. Exiting fullscreen mode might invalidate study results",
-      style: "background:red;color:white;text-align:center;",
-      showImg: false
-    });
+    if (document.fullscreenElement) {
+      study.options.datastore.set({ messages: "Participant ENTERED fs" });
+      jatos.removeOverlay();
+    } else {
+      study.options.datastore.set({ messages: "Participant EXITED fs" });
+      jatos.showOverlay({
+        text: "Please press ENTER to return to fullscreen mode. Exiting fullscreen mode might invalidate study results",
+        style: "background:red;color:white;text-align:center;",
+        showImg: false,
+      });
+    }
   }
-  };
 
   document.addEventListener(
-      "keydown",
-      (e) => {
-        if (e.key === "Enter") {
-          toggleFullScreen();
-        }
-      },
-      false,
+    "keydown",
+    (e) => {
+      if (e.key === "Enter") {
+        toggleFullScreen();
+      }
+    },
+    false
   );
-    
-  // Add fullscreen state event listener
+
   document.addEventListener("fullscreenchange", fullscreenchanged);
 
   function getRandomInt(min, max) {
     return Math.random() * (max - min) + min;
   }
 
-  const generateCoords = function(horizontalSections, verticalSections) {
+  const generateCoords = function (horizontalSections, verticalSections) {
     let coordParams = [];
 
     for (let i = 0; i < verticalSections.length; i++) {
       for (let j = 0; j < horizontalSections.length; j++) {
-        coordParams.push({X: getRandomInt(horizontalSections[j][0], horizontalSections[j][1]),
-                          Y: getRandomInt(verticalSections[i][0], verticalSections[i][1])});
+        coordParams.push({
+          X: getRandomInt(horizontalSections[j][0], horizontalSections[j][1]),
+          Y: getRandomInt(verticalSections[i][0], verticalSections[i][1]),
+        });
       }
     }
     for (let i = 0; i < verticalSections.length; i++) {
       for (let j = 0; j < horizontalSections.length; j++) {
-        coordParams.push({X: getRandomInt(horizontalSections[j][0], horizontalSections[j][1]),
-                          Y: getRandomInt(verticalSections[i][0], verticalSections[i][1])});
+        coordParams.push({
+          X: getRandomInt(horizontalSections[j][0], horizontalSections[j][1]),
+          Y: getRandomInt(verticalSections[i][0], verticalSections[i][1]),
+        });
       }
     }
     return random.shuffle(coordParams);
   };
 
   function endSuccess() {
-    var url = new URL("https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs");
-    url.searchParams.append("participant_id", jatos.urlQueryParameters.participant_id);
+    var url = new URL(
+      "https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs"
+    );
+    url.searchParams.append(
+      "participant_id",
+      jatos.urlQueryParameters.participant_id
+    );
     url.searchParams.append("return_status", "data_retrieved");
     url.searchParams.append("study_id", jatosMetaData.studyCode);
     url.searchParams.append("study_pool", jatosMetaData.batchTitle);
-    jatos.endStudyAndRedirect(url.toString(), true, "success: " + jatos.urlQueryParameters.participant_id);
-  };
+    jatos.endStudyAndRedirect(
+      url.toString(),
+      true,
+      "success: " + jatos.urlQueryParameters.participant_id
+    );
+  }
 
   function endFail(failType) {
-    var url = new URL("https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs");
-    url.searchParams.append("participant_id", jatos.urlQueryParameters.participant_id);
+    var url = new URL(
+      "https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs"
+    );
+    url.searchParams.append(
+      "participant_id",
+      jatos.urlQueryParameters.participant_id
+    );
     url.searchParams.append("return_status", "data_error");
     url.searchParams.append("study_id", jatosMetaData.studyCode);
     url.searchParams.append("study_pool", jatosMetaData.batchTitle);
-    jatos.endStudyAndRedirect(url.toString(), false, "data upload error - " + failType + ": " + jatos.urlQueryParameters.participant_id);
-  };
+    jatos.endStudyAndRedirect(
+      url.toString(),
+      false,
+      "data upload error - " +
+        failType +
+        ": " +
+        jatos.urlQueryParameters.participant_id
+    );
+  }
 
   function endException(failType) {
-    var url = new URL("https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs");
-    url.searchParams.append("participant_id", jatos.urlQueryParameters.participant_id);
+    var url = new URL(
+      "https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs"
+    );
+    url.searchParams.append(
+      "participant_id",
+      jatos.urlQueryParameters.participant_id
+    );
     url.searchParams.append("return_status", "exception_error");
     url.searchParams.append("study_id", jatosMetaData.studyCode);
     url.searchParams.append("study_pool", jatosMetaData.batchTitle);
-    jatos.endStudyAndRedirect(url.toString(), false, "exception - " + failType + ": " + jatos.urlQueryParameters.participant_id);
-  };
+    jatos.endStudyAndRedirect(
+      url.toString(),
+      false,
+      "exception - " + failType + ": " + jatos.urlQueryParameters.participant_id
+    );
+  }
 
   const globalParams = generateCoords(horizontalSections, verticalSections);
   const paramCpy = JSON.parse(JSON.stringify(globalParams));
 
   // *************************************************** //
-  // ***************** CANVAS UTILS ******************** //
+  // *************** CANVAS RENDERING ****************** //
   // *************************************************** //
 
-  const renderFunction = function(ts, canvas, ctx, obj) {
+  const renderFunction = function (ts, canvas, ctx, obj) {
     var coords = obj.aggregateParameters.coords;
     // Commit dot_coords to the current component row
     document.getElementById("main-frame").style = "";
     ctx.restore();
     ctx.beginPath();
     ctx.arc(
-      canvas.width * coords.X,  // x center
+      canvas.width * coords.X, // x center
       canvas.height * coords.Y, // y center
       13 * (window.devicePixelRatio || 1),
       0,
-      2 * Math.PI 
+      2 * Math.PI
     );
-    ctx.fillStyle = '#010101';
+    ctx.fillStyle = "#010101";
     ctx.fill();
 
     ctx.beginPath();
     ctx.arc(
-      canvas.width * coords.X,  // x center
+      canvas.width * coords.X, // x center
       canvas.height * coords.Y, // y center
       3.5 * (window.devicePixelRatio || 1),
-      0,                
-      2 * Math.PI          
+      0,
+      2 * Math.PI
     );
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = "#ffffff";
     ctx.fill();
-  }
+  };
 
-  const renderGreenDot = function(ts, canvas, ctx, obj) {
+  const renderGreenDot = function (ts, canvas, ctx, obj) {
     var coords = obj.aggregateParameters.coords;
     ctx.restore();
     ctx.beginPath();
     ctx.arc(
-      canvas.width * coords.X,  // x center
+      canvas.width * coords.X, // x center
       canvas.height * coords.Y, // y center
-      13 * (window.devicePixelRatio || 1),                // radius
-      0,                   // start angle
-      2 * Math.PI          // end angle (in radians)
+      13 * (window.devicePixelRatio || 1), // radius
+      0, // start angle
+      2 * Math.PI // end angle (in radians)
     );
-    ctx.fillStyle = '#09A552';
+    ctx.fillStyle = "#09A552";
     ctx.fill();
-    
+
     ctx.beginPath();
     ctx.arc(
-      canvas.width * coords.X,  // x center
+      canvas.width * coords.X, // x center
       canvas.height * coords.Y, // y center
       3.5 * (window.devicePixelRatio || 1),
-      0,                   // start angle
-      2 * Math.PI          // end angle (in radians)
+      0, // start angle
+      2 * Math.PI // end angle (in radians)
     );
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = "#ffffff";
     ctx.fill();
   };
 
-  const renderScalingInstructions = function(ts, canvas, ctx, obj) {
-    var element = document.getElementById('main-frame');
+  const renderScalingInstructions = function (ts, canvas, ctx, obj) {
+    var element = document.getElementById("main-frame");
     var positionInfo = element.getBoundingClientRect();
     var height = positionInfo.height;
     var width = positionInfo.width;
     canvas.width = width;
     canvas.height = height;
-    ctx.save()
+    ctx.save();
 
     document.getElementById("main-frame").style = "border: 5pt solid red";
     canvas.style = "border: 5pt solid orange";
     ctx.font = "17px Verdana";
-    ctx.textAlign = "center"; 
-    ctx.fillText("- Now, we will scale the experiment to your browser window.", 
-      canvas.width / 2, 
-      canvas.height / 3.7); 
-    ctx.fillText("- You should see the orange and the red line creating two bounding boxes.",
+    ctx.textAlign = "center";
+    ctx.fillText(
+      "- Now, we will scale the experiment to your browser window.",
       canvas.width / 2,
-      canvas.height / 3.2)
-    ctx.fillText("- ORANGE box should sit right on top of RED box with NO gaps in between.",
+      canvas.height / 3.7
+    );
+    ctx.fillText(
+      "- You should see the orange and the red line creating two bounding boxes.",
       canvas.width / 2,
-      canvas.height / 2.8)
-    ctx.fillText("- You will now proceed to the actual study. Don't forget: you need to stare at the dot until it becomes green, then press SPACE to see the next dot.",
+      canvas.height / 3.2
+    );
+    ctx.fillText(
+      "- ORANGE box should sit right on top of RED box with NO gaps in between.",
       canvas.width / 2,
-      canvas.height / 2.5)
-    ctx.fillText("- Press SPACE to START THE STUDY.",
+      canvas.height / 2.8
+    );
+    ctx.fillText(
+      "- You will now proceed to the actual study. Don't forget: you need to stare at the dot until it becomes green, then press SPACE to see the next dot.",
       canvas.width / 2,
-      canvas.height / 2.2)
+      canvas.height / 2.5
+    );
+    ctx.fillText(
+      "- Press SPACE to START THE STUDY.",
+      canvas.width / 2,
+      canvas.height / 2.2
+    );
   };
 
   // *************************************************** //
   // *************  RECORD RTC FUNCTIONS  ************** //
   // *************************************************** //
 
-  function stopRecordingCallback() {
+  async function stopRecordingCallback() {
     video.srcObject = null;
-    // video.src = URL.createObjectURL(blob);
     recorder.camera.stop();
-    console.log("debug: recorder stopped");
     let blob = recorder.getBlob();
-    console.log("debug: blob created");
-    jatos.uploadResultFile(blob, jatos.urlQueryParameters.participant_id + "_" + "video.webm")
-         .catch(() => endFail('video'));
-    console.log("debug: blob uploaded");
-  };
+    await jatos.uploadResultFile(
+        blob,
+        jatos.urlQueryParameters.participant_id + "_" + "video.webm"
+      )
+      .catch(() => endFail("video"));
+  }
 
-  const renderVid = function() {
-    video = document.querySelector('video');
-    navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false
-    }).then(async function(stream) {
-      video.srcObject = stream;
-      recorder = RecordRTC(stream, {
-          type: 'video',
+  const renderVid = function () {
+    video = document.querySelector("video");
+    navigator.mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: false,
+      })
+      .then(async function (stream) {
+        video.srcObject = stream;
+        recorder = RecordRTC(stream, {
+          type: "video",
           disableLogs: false,
           frameRate: 30,
-        }
-      );
-      recorder.onStateChanged = function(state) {
-        study.options.datastore.set({rec_state_ch: state, 
-          rec_state_ch_stamp: study.timer});
-      };
-      recorder.startRecording();
-      recorder.camera = stream;
-    }).catch((err) => {
-      endException("camera permissions");
-    });
+        });
+        recorder.onStateChanged = function (state) {
+          study.options.datastore.set({
+            rec_state_ch: state,
+            rec_state_ch_stamp: study.timer,
+          });
+        };
+        recorder.startRecording();
+        recorder.camera = stream;
+      })
+      .catch((err) => {
+        endException("camera permissions");
+      });
   };
 
   // *************************************************** //
@@ -255,8 +301,7 @@ jatos.onLoad(function() {
   // Add instruction screens
   const videoPreview = new lab.html.Screen({
     title: "i4",
-    content: 
-      `<div style="display:flex;flex-direction:column;align-content:center">
+    content: `<div style="display:flex;flex-direction:column;align-content:center">
       <h3>Camera Check</h3>
       <div><video style="height:30vh;" controls="" autoplay="" playsinline=""></video></div>
       <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
@@ -270,25 +315,24 @@ jatos.onLoad(function() {
       <p>press <kbd>v</kbd> to continue</p>
       </div>`,
     responses: {
-      "keypress(v)": "next_screen"
-    }
+      "keypress(v)": "next_screen",
+    },
   });
 
   const fsScreen = new lab.html.Screen({
     title: "i5",
-    content: 
-    `<div class="text-center">
-    <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
-    <p>Now, please press <kbd>ENTER</kbd> to enter into the fullscreen mode. At this point, please do not
-    exit the fullscreen mode until prompted to do so at the end of the study.</p>
-    <br>
-    <p>press <kbd>m</kbd> to continue</p>
-    </div>
-    </container>
-    `,
+    content: `<div class="text-center">
+      <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+      <p>Now, please press <kbd>ENTER</kbd> to enter into the fullscreen mode. At this point, please do not
+      exit the fullscreen mode until prompted to do so at the end of the study.</p>
+      <br>
+      <p>press <kbd>m</kbd> to continue</p>
+      </div>
+      </container>
+      `,
     responses: {
-      "keypress(m)": "next_screen"
-    }
+      "keypress(m)": "next_screen",
+    },
   });
 
   const instrucSlides = new lab.flow.Sequence({
@@ -296,95 +340,92 @@ jatos.onLoad(function() {
     content: [
       new lab.html.Screen({
         title: "i1",
-        content: 
-        `
-        <div class="text-center">
-        <h3>Study Information</h3>
-        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
-        <p style="margin-left:50px;margin-right:50px">The purpose of this study is to collect a large eye movement dataset to improve
-        the performance of webcam eye tracking models. As a part of the task you will be asked to look at dots
-        on the screen appearing in various locations while your eye movements are recorded using a webcam on your personal
-        computer.</p> <br><br>
-        <p>press <kbd>7</kbd> to continue</p>
-        </div>
-        </container>
-        `,
+        content: `
+          <div class="text-center">
+          <h3>Study Information</h3>
+          <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+          <p style="margin-left:50px;margin-right:50px">The purpose of this study is to collect a large eye movement dataset to improve
+          the performance of webcam eye tracking models. As a part of the task you will be asked to look at dots
+          on the screen appearing in various locations while your eye movements are recorded using a webcam on your personal
+          computer.</p> <br><br>
+          <p>press <kbd>7</kbd> to continue</p>
+          </div>
+          </container>
+          `,
         responses: {
-          "keypress(7)": "next_screen"
-        }
+          "keypress(7)": "next_screen",
+        },
       }),
       new lab.html.Screen({
         title: "i2",
-        content: 
-        ` <div class="text-center">
-        <h3>Study Information</h3>
-        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
-        <p style="margin-left:50px;margin-right:50px">To successfully complete the experiment please follow the directions described below</p>
-        <br>
-        <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
-        <li>Do not resize the browser window during the experiment</li>
-        <li>Do not reload the experiment and do not use the back button in the browser</li>
-        <li>Please enter into the fullscreen mode and give webcam permissions when prompted</li>
-        </ul>
-        <p style="margin-left:50px;margin-right:50px">Following directions above will ensure a valid test result. Additionally, make sure
-        to complete the study in a quiet distraction-free environment.</p>    
-        <br><br>
-        <p>press <kbd>a</kbd> to continue</p>
-        </div>
-        </container>`,
+        content: ` <div class="text-center">
+          <h3>Study Information</h3>
+          <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+          <p style="margin-left:50px;margin-right:50px">To successfully complete the experiment please follow the directions described below</p>
+          <br>
+          <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
+          <li>Do not resize the browser window during the experiment</li>
+          <li>Do not reload the experiment and do not use the back button in the browser</li>
+          <li>Please enter into the fullscreen mode and give webcam permissions when prompted</li>
+          </ul>
+          <p style="margin-left:50px;margin-right:50px">Following directions above will ensure a valid test result. Additionally, make sure
+          to complete the study in a quiet distraction-free environment.</p>    
+          <br><br>
+          <p>press <kbd>a</kbd> to continue</p>
+          </div>
+          </container>`,
         responses: {
-          "keypress(a)": "next_screen"
-        }
+          "keypress(a)": "next_screen",
+        },
       }),
       new lab.html.Screen({
         title: "i3",
-        content: 
-        `<div class="text-center">
-        <h3>The Task</h3>
-        <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
-        <p>With each trial, please look at the BLACK dot that appears on the screen. Please stare at the dot until its color turns GREEN. After the dot
-        became GREEN, press <kbd>SPACE</kbd> to see the dot in the next location.</p>
-        <br>
-        <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
-        <li>Follow the dot with your eyes, please do NOT turn your head to follow the dot.</li>
-        <li>Make sure there are no other faces in your background (photos or actual people).</li>
-        <li>If you are wearing glasses, make sure your eyes are clearly visible through the glasses.</li>
-        </ul>
-        <p>press <kbd>0</kbd> to continue</p>
-        </div>
-        </container>
-        `,
+        content: `<div class="text-center">
+          <h3>The Task</h3>
+          <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+          <p>With each trial, please look at the BLACK dot that appears on the screen. Please stare at the dot until its color turns GREEN. After the dot
+          became GREEN, press <kbd>SPACE</kbd> to see the dot in the next location.</p>
+          <br>
+          <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
+          <li>Follow the dot with your eyes, please do NOT turn your head to follow the dot.</li>
+          <li>Make sure there are no other faces in your background (photos or actual people).</li>
+          <li>If you are wearing glasses, make sure your eyes are clearly visible through the glasses.</li>
+          </ul>
+          <p>press <kbd>0</kbd> to continue</p>
+          </div>
+          </container>
+          `,
         responses: {
-          "keypress(0)": "next_screen"
-        }
+          "keypress(0)": "next_screen",
+        },
       }),
       videoPreview,
       fsScreen,
-    ]
+    ],
   });
 
-  const canvasFactory = function(params, ix) {
+  const canvasFactory = function (params, ix) {
     var coords = globalParams.pop();
 
     var trialSeq = new lab.flow.Sequence({
       title: "dot_seq",
       parameters: {
-        coords: coords
+        coords: coords,
       },
       content: [
         new lab.canvas.Screen({
           title: "bdot_canvas",
           renderFunction: renderFunction,
-          timeout: 10
+          timeout: 2000,
         }),
         new lab.canvas.Screen({
           title: "gdot_canvas",
           renderFunction: renderGreenDot,
           responses: {
-            "keypress(Space)": "next_dot_press"
-          }
-        })
-      ]
+            "keypress(Space)": "next_dot_press",
+          },
+        }),
+      ],
     });
     return trialSeq;
   };
@@ -396,22 +437,23 @@ jatos.onLoad(function() {
   });
 
   const studyWelcome = new lab.html.Screen({
-    content:'<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">' +
-    '<img src="rlab.png" height="50" width="70" style="display:inline-block;align-self:center;">' +
-    '<h3>Webcam Eye Tracking Study</h3>' +
-    '<p>press <kbd>SPACE</kbd> to continue</p>' +
-    '<p class="text-muted">${ parameters.studyVersion }</p>' +
-    '</div>',
+    content:
+      '<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">' +
+      '<img src="rlab.png" height="50" width="70" style="display:inline-block;align-self:center;">' +
+      "<h3>Webcam Eye Tracking Study</h3>" +
+      "<p>press <kbd>SPACE</kbd> to continue</p>" +
+      '<p class="text-muted">${ parameters.studyVersion }</p>' +
+      "</div>",
     responses: {
-      "keypress(Space)": "to_study"
+      "keypress(Space)": "to_study",
     },
     parameters: {
-      studyVersion: STUDYVERSION
-    }
+      studyVersion: STUDYVERSION,
+    },
   });
 
   const redirectScreen = new lab.html.Screen({
-    title: 'redirect_screen',
+    title: "redirect_screen",
     content: `<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">
               <div>
                 <p>Please press <kbd>Submit</kbd> to submit the study results.
@@ -423,72 +465,49 @@ jatos.onLoad(function() {
               </div>
                `,
     responses: {
-      "click button#submit": "submit_result"
-    }
+      "click button#submit": "submit_result",
+    },
   });
 
   const awaitRedirectScreen = new lab.html.Screen({
-    title: 'redirect_await',
-    content: `<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">
-              <div>
-                <p>Please press <kbd>Submit</kbd> to submit the study results.
-               Do not close any windows until you see a completion message</p>
-               </div>
-               <div>
-               <p><b>Please wait while the results are being submitted.</b></p>
-               </div>
-               <div class="content-horizontal-center
-               content-vertical-center" style="display:flex;align-content:center;margin-top:30px">
-               <div class="spinner">
-                 <div></div>
-                 <div></div>
-                 <div></div>
-                 <div></div>
-                 <div></div>
-                 <div></div>
-               </div>
-               </div>
-              </div>
-               `,
-    timeout: 5000
-  });
-
-  const awaitVideo = new lab.html.Screen({
-    title: 'video_await',
-    content: `<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">
-               <div>
-               <p><b>Please wait while the data are being processed</b></p>
-               </div>
-               <div class="content-horizontal-center
-               content-vertical-center" style="display:flex;align-content:center;margin-top:30px">
-               <div class="spinner">
-                 <div></div>
-                 <div></div>
-                 <div></div>
-                 <div></div>
-                 <div></div>
-                 <div></div>
-               </div>
-               </div>
-              </div>
-               `,
-    timeout: 5000
+    title: "redirect_await",
+    content: 
+      `<div style="margin-top:20px;display:flex;flex-direction:column;align-content:center">
+      <div>
+        <p>Please press <kbd>Submit</kbd> to submit the study results.
+        Do not close any windows until you see a completion message</p>
+        </div>
+        <div>
+        <p><b>Please wait while the results are being submitted.</b></p>
+        </div>
+        <div class="content-horizontal-center
+        content-vertical-center" style="display:flex;align-content:center;margin-top:30px">
+        <div class="spinner">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        </div>
+      </div>
+        `,
   });
 
   const trialSeqEnd = new lab.html.Screen({
     title: "trial_seq_end",
-    content: 
-    `
-    <div class="text-center">
-    <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
-    <p>This is the end of the trial sequence.</p>
-    <br>
-    <p>press <kbd>q</kbd> to continue</p>
-    </div>
-    </container>
-    `,
+    content: `
+      <div class="text-center">
+      <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
+      <p>This is the end of the trial sequence.</p>
+      <br>
+      <p>press <kbd>q</kbd> to continue</p>
+      </div>
+      </container>
+      `,
     responses: {
-      "keypress(q)": "next_screen"
+      "keypress(q)": "next_screen",
     },
   });
 
@@ -496,9 +515,9 @@ jatos.onLoad(function() {
     title: "main_seq",
     renderFunction: renderScalingInstructions,
     responses: {
-      "keypress(Space)": "next_screen"
+      "keypress(Space)": "next_screen",
     },
-    datacommit: false
+    datacommit: false,
   });
 
   const studySeq = new lab.flow.Sequence({
@@ -506,17 +525,15 @@ jatos.onLoad(function() {
     content: [
       scalingInstructions,
       dotLoop,
-      // awaitVideo,
       trialSeqEnd,
       redirectScreen,
-      awaitRedirectScreen
-    ]
+      awaitRedirectScreen,
+    ],
   });
 
   const mainFrame = new lab.html.Frame({
-    el: document.getElementById('main-frame'),
-    context:
-      `<main class="content-vertical-center content-horizontal-center" id="inline-main" data-labjs-section="main">
+    el: document.getElementById("main-frame"),
+    context: `<main class="content-vertical-center content-horizontal-center" id="inline-main" data-labjs-section="main">
       <div>
         <div class="spinner">
           <div></div>
@@ -528,12 +545,12 @@ jatos.onLoad(function() {
         </div>
       </div>
     </main>`,
-    contextSelector: 'main',
-    content: studySeq
+    contextSelector: "main",
+    content: studySeq,
   });
 
   const instrucFrame = new lab.html.Frame({
-    el: document.getElementById('main-frame'),
+    el: document.getElementById("main-frame"),
     context: `
       <header>
         <h1>Study Instructions</h1>
@@ -545,49 +562,46 @@ jatos.onLoad(function() {
         Robbins Visual Cognition Lab
       </footer>
     `,
-    contextSelector: 'main',
+    contextSelector: "main",
     content: instrucSlides,
   });
 
   const study = new lab.flow.Sequence({
-    plugins: [
-      new lab.plugins.Debug(),
-      new lab.plugins.Metadata(),
-    ],
-    content: [
-      studyWelcome,
-      instrucFrame,
-      mainFrame
-    ],
-    datastore: dataStore
+    plugins: [new lab.plugins.Debug(), new lab.plugins.Metadata()],
+    content: [studyWelcome, instrucFrame, mainFrame],
+    datastore: dataStore,
   });
 
   // *************************************************** //
-  // *******  EVENT LISTENERS & DATA LOGGING  ********** //
+  // *************  EVENTS & DATA LOGGING  ************* //
   // *************************************************** //
 
-
-  // var videoPromise =  new Promise((resolve) => {
-  //     recorder.stopRecording(stopRecordingCallback);
-  //     resolve();
-  // });
-
-
-  videoPreview.on('run', () => renderVid());
-  fsScreen.on('run', () => recorder.pauseRecording());
-  dotLoop.on('run', () => recorder.resumeRecording());
-  // dotLoop.on('end', () => recorder.stopRecording(stopRecordingCallback));
-  dotLoop.on('end', () => recorder.pauseRecording());
-  redirectScreen.on('end', () =>  
+  videoPreview.on("run", () => renderVid());
+  fsScreen.on("run", () => recorder.pauseRecording());
+  dotLoop.on("run", () => recorder.resumeRecording());
+  dotLoop.on("end", () => recorder.pauseRecording());
+  redirectScreen.on("end", () =>
     new Promise((resolve, reject) => {
-      recorder.stopRecording(stopRecordingCallback);
+      recorder.stopRecording();
+      stopRecordingCallback();
       resolve();
     })
-    .then(() => {jatos.submitResultData(study.options.datastore.exportJson())})
-    .then(() => {jatos.uploadResultFile(study.options.datastore.exportCsv(), jatos.urlQueryParameters.participant_id + '.csv')})
-    //.then(() => {endSuccess()})
-    .catch(() => { console.log("caught during upload ") /*endFail("dataset") */ }));
-  awaitRedirectScreen.on('end', () => endSuccess());                                   
+      .then(() => {
+        jatos.submitResultData(study.options.datastore.exportJson());
+      })
+      .then(() => {
+        jatos.uploadResultFile(
+          study.options.datastore.exportCsv(),
+          jatos.urlQueryParameters.participant_id + "_dataset.csv"
+        );
+      })
+      .then(() => {
+        endSuccess();
+      })
+      .catch(() => {
+        endFail("dataset");
+      })
+  );
 
   // *************************************************** //
   // ****************  STUDY RUNNER  ******************* //
