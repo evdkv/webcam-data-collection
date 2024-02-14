@@ -18,8 +18,19 @@ None for now. File upload errors were resolved.
 
 TO-DOs
 --------------------------
+Before pilot run:
+- [ ] Change the study version
+- [ ] Fix the data upload overlay
+- [ ] Double check instructions wording
+- [ ] Reset the droplet (add more initialization flags?)
+- [ ] Erase Qualtrics responses
+- [ ] Add demographics and consent to Qualtrics
+
+After pilot run:
 - [ ] Remove debugger console logs and comments
 - [ ] Add detailed documentation to the study.js script
+
+Done:
 - [X] Refactor exception handling to match the new promise logic
 - [X] Switch the text size units to rem and test on screens with various scaling ratios
 - [X] Set up upload promises
