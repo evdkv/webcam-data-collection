@@ -18,10 +18,10 @@ None for now. File upload errors were resolved.
 
 TO-DOs
 --------------------------
-- [ ] Refactor exception handling to match the new promise logic
 - [ ] Remove debugger console logs and comments
 - [ ] Add detailed documentation to the study.js script
-- [ ] Switch the text size units to rem and test on screens with various scaling ratios
+- [X] Refactor exception handling to match the new promise logic
+- [X] Switch the text size units to rem and test on screens with various scaling ratios
 - [X] Set up upload promises
 - [X] Change the HTTP POST timeout in the JATOS server configuration
 - [X] Change the max allowed upload file size in the JATOS server configuration
