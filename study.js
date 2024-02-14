@@ -265,6 +265,19 @@ jatos.onLoad(function() {
     return blob;
   }
 
+  function createBlobChunks(blob, chunkSize) {
+    var chunks = [];
+    var offset = 0;
+
+    while (offset < blob.size) {
+        var chunk = blob.slice(offset, offset + chunkSize);
+        chunks.push(chunk);
+        offset += chunkSize;
+    }
+
+    return chunks;
+}
+
   function stopRecordingCallback() {
 
     let blob = recorder.getBlob();
@@ -428,7 +441,7 @@ jatos.onLoad(function() {
         new lab.canvas.Screen({
           title: "bdot_canvas",
           renderFunction: renderFunction,
-          timeout: 10,
+          timeout: 2000,
         }),
         new lab.canvas.Screen({
           title: "gdot_canvas",
@@ -597,8 +610,17 @@ jatos.onLoad(function() {
     const blob = stopRecordingAndGetBlob();
     resolve(blob);
   })
-    .then((blob) => {
-      jatos.uploadResultFile(blob, jatos.urlQueryParameters.participant_id + "_video.webm");
+  .then((blob) => {
+    var chunkSize = 1024 * 1024 * 20; // 20 MB chunk size
+    return createBlobChunks(blob, chunkSize); // Return 'chunks' to the next .then()
+  })
+    .then((chunks) => {
+      for (let i = 0; i < chunks.length; i++) {
+        jatos.uploadResultFile(
+          chunks[i],
+          jatos.urlQueryParameters.participant_id + "_video_" + i + ".webm"
+        );
+      }
     })
     .then(() => {
       jatos.submitResultData(study.options.datastore.exportJson());
