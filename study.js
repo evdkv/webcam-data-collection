@@ -276,19 +276,6 @@ jatos.onLoad(function() {
     }
 
     return chunks;
-}
-
-  function stopRecordingCallback() {
-
-    let blob = recorder.getBlob();
-
-      jatos.uploadResultFile(
-          blob,
-          jatos.urlQueryParameters.participant_id + "_" + "video.webm"
-        ).catch(() => {
-      //endFail("video");
-      console.log(error);
-    })
   }
 
   const renderVid = function () {
