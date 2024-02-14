@@ -255,15 +255,27 @@ jatos.onLoad(function() {
   // *************  RECORD RTC FUNCTIONS  ************** //
   // *************************************************** //
 
-  async function stopRecordingCallback() {
+  async function stopRecordingAndGetBlob() {
+    await new Promise((resolve, reject) => {
+      recorder.stopRecording(resolve);
+    });
     video.srcObject = null;
     recorder.camera.stop();
+    const blob = recorder.getBlob();
+    return blob;
+  }
+
+  function stopRecordingCallback() {
+
     let blob = recorder.getBlob();
-    await jatos.uploadResultFile(
-        blob,
-        jatos.urlQueryParameters.participant_id + "_" + "video.webm"
-      )
-      .catch(() => endFail("video"));
+
+      jatos.uploadResultFile(
+          blob,
+          jatos.urlQueryParameters.participant_id + "_" + "video.webm"
+        ).catch(() => {
+      //endFail("video");
+      console.log(error);
+    })
   }
 
   const renderVid = function () {
@@ -416,7 +428,7 @@ jatos.onLoad(function() {
         new lab.canvas.Screen({
           title: "bdot_canvas",
           renderFunction: renderFunction,
-          timeout: 2000,
+          timeout: 10,
         }),
         new lab.canvas.Screen({
           title: "gdot_canvas",
@@ -581,27 +593,29 @@ jatos.onLoad(function() {
   dotLoop.on("run", () => recorder.resumeRecording());
   dotLoop.on("end", () => recorder.pauseRecording());
   redirectScreen.on("end", () =>
-    new Promise((resolve, reject) => {
-      recorder.stopRecording();
-      stopRecordingCallback();
-      resolve();
+  new Promise((resolve, reject) => {
+    const blob = stopRecordingAndGetBlob();
+    resolve(blob);
+  })
+    .then((blob) => {
+      jatos.uploadResultFile(blob, jatos.urlQueryParameters.participant_id + "_video.webm");
     })
-      .then(() => {
-        jatos.submitResultData(study.options.datastore.exportJson());
-      })
-      .then(() => {
-        jatos.uploadResultFile(
-          study.options.datastore.exportCsv(),
-          jatos.urlQueryParameters.participant_id + "_dataset.csv"
-        );
-      })
-      .then(() => {
-        endSuccess();
-      })
-      .catch(() => {
-        endFail("dataset");
-      })
-  );
+    .then(() => {
+      jatos.submitResultData(study.options.datastore.exportJson());
+    })
+    .then(() => {
+      jatos.uploadResultFile(
+        study.options.datastore.exportCsv(),
+        jatos.urlQueryParameters.participant_id + "_dataset.csv"
+      );
+    })
+    .then(() => {
+      endSuccess();
+    })
+    .catch(() => {
+      endFail("dataset");
+    })
+);
 
   // *************************************************** //
   // ****************  STUDY RUNNER  ******************* //
