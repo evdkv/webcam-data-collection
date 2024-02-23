@@ -1,10 +1,14 @@
 jatos.onLoad(function() {
-  const STUDYVERSION = "v2.0-2s-pilot";
+  const STUDYVERSION = "v3-2s-lab-pilot";
+  const BDOT_DURATION = 2000;
+
   var video = null;
   var recorder = null;
 
   var jatosMetaData = {};
   jatos.addJatosIds(jatosMetaData);
+
+  jatos.waitSendDataOverlayConfig = {text: "", showImg: false};
 
   // This will be empty for the rest of the study.
   // Use study.options.datastore to access/set data in the data store
@@ -428,7 +432,7 @@ jatos.onLoad(function() {
         new lab.canvas.Screen({
           title: "bdot_canvas",
           renderFunction: renderFunction,
-          timeout: 2000,
+          timeout: BDOT_DURATION,
         }),
         new lab.canvas.Screen({
           title: "gdot_canvas",
@@ -490,7 +494,7 @@ jatos.onLoad(function() {
         Do not close any windows until you see a completion message</p>
         </div>
         <div>
-        <p><b>Please wait while the results are being submitted.</b></p>
+        <p><b>Please wait while the results are being submitted. This can take up to 5 minutes.</b></p>
         </div>
         <div class="content-horizontal-center
         content-vertical-center" style="display:flex;align-content:center;margin-top:30px">
@@ -598,7 +602,7 @@ jatos.onLoad(function() {
     resolve(blob);
   })
   .then((blob) => {
-    var chunkSize = 1024 * 1024 * 20; // 20 MB chunk size
+    var chunkSize = 1024 * 1024 * 10; // 11 MB chunk size
     return createBlobChunks(blob, chunkSize); // Return 'chunks' to the next .then()
   })
     .then((chunks) => {
@@ -631,4 +635,5 @@ jatos.onLoad(function() {
   // *************************************************** //
 
   study.run();
+
 });

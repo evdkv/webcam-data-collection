@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Change to your email and domain (for Let's Encrypt)
-email=redacted
-domain=redacted
+email=myemail@example.org
+domain=my.domain.org
 
 cat >/root/compose.yaml <<EOL
 version: "3.8"
@@ -47,8 +47,10 @@ services:
       - "traefik.http.routers.jatos.entrypoints=websecure"
       - "traefik.http.routers.jatos.tls.certresolver=jatosresolver"
     command:
-        - '-Djatos.resultUploads.limitPerStudyRun=500MB'
-        - '-Djatos.resultUploads.maxFileSize=500MB'
+      - '-Djatos.resultUploads.limitPerStudyRun=500MB'
+      - '-Djatos.resultUploads.maxFileSize=500MB'
+      #- '-Dplay.http.session.secure=true'
+      - '-Djatos.brandingUrl=https://robbinslab.github.io/jatos-welcome-page/index.html'
 
 volumes:
   jatos-data:
