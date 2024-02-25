@@ -1,6 +1,7 @@
 jatos.onLoad(function() {
-  const STUDYVERSION = "v3-2s-lab-pilot";
+  const STUDYVERSION = "v3.1-2s-lab-pilot";
   const BDOT_DURATION = 2000;
+  const GDOT_DURATION = 2000;
 
   var video = null;
   var recorder = null;
@@ -226,7 +227,7 @@ jatos.onLoad(function() {
 
     document.getElementById("main-frame").style = "border: 5pt solid red";
     canvas.style = "border: 5pt solid orange";
-    ctx.font = "17px Verdana";
+    ctx.font = `${1.1 * window.innerWidth / 100}px Verdana`;
     ctx.textAlign = "center";
     ctx.fillText(
       "- Now, we will scale the experiment to your browser window.",
@@ -437,6 +438,7 @@ jatos.onLoad(function() {
         new lab.canvas.Screen({
           title: "gdot_canvas",
           renderFunction: renderGreenDot,
+          timeout: GDOT_DURATION,
           responses: {
             "keypress(Space)": "next_dot_press",
           },
@@ -575,7 +577,7 @@ jatos.onLoad(function() {
         <!-- this is where stimuli will be inserted -->
       </main>
       <footer class="content-horizontal-center content-vertical-center text-muted">
-        Robbins Visual Cognition Lab
+        <p>Robbins Visual Cognition Lab</p>
       </footer>
     `,
     contextSelector: "main",

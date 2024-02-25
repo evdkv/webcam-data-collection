@@ -40,6 +40,26 @@
  .spinner div:nth-of-type(6) {
     transform: translateZ(28.8px);
  }
+
+p {
+   font-size: calc(0.8vw + 0.8vh);
+}
+
+li {
+   font-size: calc(0.8vw + 0.8vh);
+}
+
+kbd {
+   font-size: calc(0.8vw + 0.8vh);
+}
+
+h1 {
+   font-size: calc(1.5vw + 1.5vh);
+}
+
+h3 {
+   font-size: calc(1.1vw + 1.1vh);
+}
  
  @keyframes spinner-y0fdc1 {
     0% {
