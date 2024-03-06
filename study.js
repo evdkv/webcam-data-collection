@@ -1,5 +1,5 @@
 jatos.onLoad(function() {
-  const STUDYVERSION = "v3.1-2s-lab-pilot";
+  const STUDYVERSION = "v3.2-2s-campus";
   const BDOT_DURATION = 2000;
   const GDOT_DURATION = 2000;
 
@@ -342,6 +342,8 @@ jatos.onLoad(function() {
       <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
       <p>Now, please press <kbd>ENTER</kbd> to enter into the fullscreen mode. At this point, please do not
       exit the fullscreen mode until prompted to do so at the end of the study.</p>
+      <p>If after pressing <kbd>ENTER</kbd> nothing happens, please continue while making sure that the browser
+      window is maximized on your screen.</p>
       <br>
       <p>press <kbd>m</kbd> to continue</p>
       </div>
@@ -381,9 +383,12 @@ jatos.onLoad(function() {
           <p style="margin-left:50px;margin-right:50px">To successfully complete the experiment please follow the directions described below</p>
           <br>
           <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
+          <li>Make sure you are completing the study on a laptop/desktop with a camera located above the screen</li>
+          <li>Ensure that your browser has an access to the webcam</li>
+          <li>Close all other tabs in your browser and silence notifications</li>
           <li>Do not resize the browser window during the experiment</li>
           <li>Do not reload the experiment and do not use the back button in the browser</li>
-          <li>Please enter into the fullscreen mode and give webcam permissions when prompted</li>
+          <li>When prompted, please enter into the fullscreen mode and give webcam permissions</li>
           </ul>
           <p style="margin-left:50px;margin-right:50px">Following directions above will ensure a valid test result. Additionally, make sure
           to complete the study in a quiet distraction-free environment.</p>    
@@ -400,13 +405,14 @@ jatos.onLoad(function() {
         content: `<div class="text-center">
           <h3>The Task</h3>
           <container style="width:60vw;display:inline-flex;align-self:center;flex-direction:column;">
-          <p>With each trial, please look at the BLACK dot that appears on the screen. Please stare at the dot until its color turns GREEN. After the dot
-          became GREEN, press <kbd>SPACE</kbd> to see the dot in the next location.</p>
+          <p>With each trial, please look at the <strong>BLACK</strong> dot that appears on the screen. Please stare at the dot until its color 
+          turns <strong style="color: green;">GREEN</strong>. After the dot
+          became <strong style="color: green;">GREEN</strong>, press <kbd>SPACE</kbd> to see the dot in the next location.</p>
           <br>
           <ul style="list-style-type:disc;margin-left:50px;margin-right:50px;text-align:left;">
-          <li>Follow the dot with your eyes, please do NOT turn your head to follow the dot.</li>
+          <li>Follow the dot with your eyes, try to not turn your head to follow the dot.</li>
           <li>Make sure there are no other faces in your background (photos or actual people).</li>
-          <li>If you are wearing glasses, make sure your eyes are clearly visible through the glasses.</li>
+          <li>If you are wearing glasses, make sure your eyes are clearly visible through the glasses without glare.</li>
           </ul>
           <p>press <kbd>0</kbd> to continue</p>
           </div>
@@ -585,7 +591,7 @@ jatos.onLoad(function() {
   });
 
   const study = new lab.flow.Sequence({
-    plugins: [new lab.plugins.Debug(), new lab.plugins.Metadata()],
+    plugins: [new lab.plugins.Metadata()], // new lab.plugins.Debug()
     content: [studyWelcome, instrucFrame, mainFrame],
     datastore: dataStore,
   });
