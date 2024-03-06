@@ -19,11 +19,11 @@ None for now. File upload errors were resolved.
 TO-DOs
 --------------------------
 Before campus run:
-- [ ] New ID assignment in Qualtrics
-- [ ] Add the tab closing instructions
-- [ ] Add the full screen notice
-- [ ] Change the study version
-- [ ] Remove debugger console logs and comments
+- [X] New ID assignment in Qualtrics
+- [X] Add the tab closing instructions
+- [X] Add the full screen notice
+- [X] Change the study version
+- [X] Remove debugger console logs and comments
 
 Done:
 - [X] Change the study version
