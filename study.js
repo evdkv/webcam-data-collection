@@ -1,5 +1,5 @@
 jatos.onLoad(function() {
-  const STUDYVERSION = "v3.2-2s-campus";
+  const STUDYVERSION = "v3.3-2s-campus";
   const BDOT_DURATION = 2000;
   const GDOT_DURATION = 2000;
 
@@ -102,6 +102,12 @@ jatos.onLoad(function() {
     var url = new URL(
       "https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs"
     );
+
+    if (jatosMetaData.batchTitle === "offcampus") {
+      url = new URL(
+        "https://richmond.ca1.qualtrics.com/jfe/form/SV_6JR6xmahA4eBZDU"
+      );
+    }
     url.searchParams.append(
       "participant_id",
       jatos.urlQueryParameters.participant_id
@@ -120,6 +126,13 @@ jatos.onLoad(function() {
     var url = new URL(
       "https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs"
     );
+
+    if (jatosMetaData.batchTitle === "offcampus") {
+      url = new URL(
+        "https://richmond.ca1.qualtrics.com/jfe/form/SV_6JR6xmahA4eBZDU"
+      );
+    }
+
     url.searchParams.append(
       "participant_id",
       jatos.urlQueryParameters.participant_id
@@ -141,6 +154,13 @@ jatos.onLoad(function() {
     var url = new URL(
       "https://richmond.ca1.qualtrics.com/jfe/form/SV_3CqnAJ1nOwFXWjs"
     );
+
+    if (jatosMetaData.batchTitle === "offcampus") {
+      url = new URL(
+        "https://richmond.ca1.qualtrics.com/jfe/form/SV_6JR6xmahA4eBZDU"
+      );
+    }
+
     url.searchParams.append(
       "participant_id",
       jatos.urlQueryParameters.participant_id
